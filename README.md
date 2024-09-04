@@ -1,43 +1,50 @@
-# FakePlayerEventLogger ![GitHub](https://img.shields.io/badge/github-FakePlayerEventLogger-blue?logo=github) ![Minecraft](https://img.shields.io/badge/Minecraft-Mod-blue?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACmElEQVR42mJ0fqosKi4OHDx48A6GMdcTg4G3AvISjLf6HnPvfgax+IHCAB3SgMrCCoJDw75+C0c3nz5uWefv69k5dY5cnTp0/GpRsRAwMAZVUBH39/+v7yQv7O4I7gnIv+TQ9tGgRf9TgyMyDFDFTYtdJFCz6UlH/jwnHzj3gAeqkH+/fvX7x4MdUOHDgRzV2JiQAIA2CNHj179+5NrwDw9DhCzBTyJ1IAw3lP9MZ3gIJiJm4Ii+vr2zZ89GoQi6fPnycOfOhXC1oS0EABIz8z9PPYgHgFwUwLSkOhMtiMiADQy1ovVzsQzfrhw4fo9PD5YkQl8RZQAAINiMeGjNzJkFIKnhv6FLJgfEBDHDp06e/fv2cPHiwdVJS0sfMzAMhOAZFAAAFDBAAc5AGAbU+AAkBDCBRDtgCcfK+ANCAOH8Fg8PAxMnTp1evXrwDS+4RQ0cZQEDBsH/9em4sR7h2CiwCiiBvHQagFAAB2LgMSaAVzicAkj5dJgdEBGACV8f/h87AHiABX3AiP3Z4f/AeJAEAhJSkZWFn7S+oFGjRuXKzA1kBqCY8ePAgnr8lADFnLnPnv1M4WZ+4d6QhQaGnTx8Rk1f8KmpwHA7h9HrY8fUoGBgZ0+eLFU0uWAEBraAQgWywcEIL0kSE5FUpgAw7JAwMDAIChpSk0l3cBDkwMjCQkJKBCA1hlQWvwr5xMEODI1zUAyOwwGQAHDIAHY2KiAjEoiqQESATDU2IKhDQECtCCaO1C4MGDawDKMDR8+XJw+fZrw4cMbGRnTHx8fphOTgyIDFQFgB9Wi4NB/f//Q0pUBf0RkQzL05MQcO3aMyO/sZWB0gA6Bz8DA4KBCVBiBgKDEMA0KoBN0aCzAxtAQATFB09+eBFMnUAkVBmAEBR+XFCqAQCLAEjL9CIyBCXAlAAUJHjV7evfuWz0UkpUSUVJBYeQFYhJsCeg1gBw6JevDhwdGzZsiUbwDJwC4cwKAYwgkGLFoAIAVPB+/Lh48SJUp7YJHfbwTAoj24CBdyOhwgqIBgJQ9oFwA/5gEpgGxyUgZ9QAUAADU9IgAAAAg1OUlKBF0cAAAAASUVORK5CYII=)
 
-FakePlayerEventLogger es una extensión de mod para Minecraft del mod Carpet, diseñada para registrar eventos relacionados con jugadores falsos (bots) en el juego. Envía estos eventos a un servidor de socket especificado para su posterior procesamiento o análisis.
+# FakePlayerEventLogger
 
-## Características
+![GitHub](https://img.shields.io/badge/github-FakePlayerEventLogger-blue?logo=github) ![Minecraft](https://img.shields.io/badge/Minecraft-Mod-blue?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACmElEQVR42mJ0fqosKi4OHDx48A6GMdcTg4G3AvISjLf6HnPvfgax+IHCAB3SgMrCCoJDw75+C0c3nz5uWefv69k5dY5cnTp0/GpRsRAwMAZVUBH39/+v7yQv7O4I7gnIv+TQ9tGgRf9TgyMyDFDFTYtdJFCz6UlH/jwnHzj3gAeqkH+/fvX7x4MdUOHDgRzV2JiQAIA2CNHj179+5NrwDw9DhCzBTyJ1IAw3lP9MZ3gIJiJm4Ii+vr2zZ89GoQi6fPnycOfOhXC1oS0EABIz8z9PPYgHgFwUwLSkOhMtiMiADQy1ovVzsQzfrhw4fo9PD5YkQl8RZQAAINiMeGjNzJkFIKnhv6FLJgfEBDHDp06e/fv2cPHiwdVJS0sfMzAMhOAZFAAAFDBAAc5AGAbU+AAkBDCBRDtgCcfK+ANCAOH8Fg8PAxMnTp1evXrwDS+4RQ0cZQEDBsH/9em4sR7h2CiwCiiBvHQagFAAB2LgMSaAVzicAkj5dJgdEBGACV8f/h87AHiABX3AiP3Z4f/AeJAEAhJSkZWFn7S+oFGjRuXKzA1kBqCY8ePAgnr8lADFnLnPnv1M4WZ+4d6QhQaGnTx8Rk1f8KmpwHA7h9HrY8fUoGBgZ0+eLFU0uWAEBraAQgWywcEIL0kSE5FUpgAw7JAwMDAIChpSk0l3cBDkwMjCQkJKBCA1hlQWvwr5xMEODI1zUAyOwwGQAHDIAHY2KiAjEoiqQESATDU2IKhDQECtCCaO1C4MGDawDKMDR8+XJw+fZrw4cMbGRnTHx8fphOTgyIDFQFgB9Wi4NB/f//Q0pUBf0RkQzL05MQcO3aMyO/sZWB0gA6Bz8DA4KBCVBiBgKDEMA0KoBN0aCzAxtAQATFB09+eBFMnUAkVBmAEBR+XFCqAQCLAEjL9CIyBCXAlAAUJHjV7evfuWz0UkpUSUVJBYeQFYhJsCeg1gBw6JevDhwdGzZsiUbwDJwC4cwKAYwgkGLFoAIAVPB+/Lh48SJUp7YJHfbwTAoj24CBdyOhwgqIBgJQ9oFwA/5gEpgGxyUgZ9QAUAADU9IgAAAAg1OUlKBF0cAAAAASUVORK5CYII=)
 
-- Registra eventos de aparición de jugadores falsos
-- Nombre de equipo de bot, host del servidor y puerto configurables
-- Comunicación de socket asíncrona para un impacto mínimo en el juego
-- Formato JSON para facilitar el análisis de datos
+**FakePlayerEventLogger** es una extensión del mod **Carpet** para **Minecraft**, diseñada para registrar eventos relacionados con jugadores falsos (bots) en el juego. Los eventos se envían a un servidor de socket especificado para su posterior procesamiento o análisis.
 
-## Requisitos
+## 🌟 Características
 
-- Minecraft 1.18.2
-- Fabric Loader >=0.14.2
-- Java >=17
-- Mod Carpet
+- **Registro de eventos de bots**: Captura eventos de aparición y acciones de FakePlayers/bot
+- **Configuración personalizada**: configura la dirección del servidor y el puerto.
+- **Comunicación asíncrona**: Comunicación de socket para minimizar el impacto en el rendimiento del juego.
+- **Formato JSON**: Los eventos se registran en formato JSON para facilitar su análisis.
 
-## Instalación
+### 🔧 Próximas Mejoras
 
-1. Asegúrate de tener instalados Fabric y el mod Carpet.
-2. Descarga la última versión de FakePlayerEventLogger desde la página de lanzamientos.
-3. Coloca el archivo `.jar` descargado en tu carpeta de `mods` de Minecraft.
-4. Inicia Minecraft con el cargador de Fabric.
+- Implementación del manejo de desconexión.
+- Optimización de la gestión de eventos y rendimiento.
 
-## Configuración
+## 🛠 Requisitos
 
-El mod utiliza un archivo de configuración ubicado en `config/carpet/envetlogs.properties`. Si no existe, se creará con valores predeterminados en la primera ejecución.
+- **Minecraft**: 1.18.2
+- **Fabric Loader**: >= 0.14.2
+- **Java**: >= 17
+- **Mod Carpet**
 
-Puedes configurar las siguientes propiedades:
+## 🚀 Instalación
 
-- `bot_team_name`: El nombre del equipo para los bots (predeterminado: "zBot")
-- `server_host`: La dirección del host para el servidor de socket (predeterminado: "localhost")
-- `server_port`: El puerto para el servidor de socket (predeterminado: 25566)
+1. **Pre-requisitos**: Asegúrate de tener **Fabric** y el mod **Carpet** instalados.
+2. **Descarga**: Obtén la última versión de **FakePlayerEventLogger** desde la [página de lanzamientos](https://github.com/tu-repositorio/releases).
+3. **Instalación**: Coloca el archivo `.jar` descargado en tu carpeta `mods` de Minecraft.
+4. **Inicio**: Ejecuta Minecraft con el cargador de **Fabric**.
 
-## Uso
+## ⚙️ Configuración
 
-Una vez instalado y configurado, el mod registrará automáticamente los eventos de aparición de jugadores falsos. Estos eventos se envían al servidor de socket especificado en formato JSON.
+El mod crea y utiliza un archivo de configuración ubicado en `config/carpet/eventlogs.properties`. Este archivo se genera automáticamente con valores predeterminados en la primera ejecución.
 
-Ejemplo de un evento registrado:
+### Opciones de Configuración
+
+- **`server_host`**: Establece la dirección del host para el servidor de socket (valor predeterminado: `"localhost"`).
+- **`server_port`**: Configura el puerto para el servidor de socket (valor predeterminado: `25566`).
+
+## 📋 Uso
+
+Una vez instalado y configurado, el mod registrará automáticamente los eventos de jugadores falsos. Estos eventos se enviarán al servidor de socket configurado en formato JSON.
+
+### Ejemplo de un Evento Registrado
 
 ```json
 {
@@ -51,32 +58,36 @@ Ejemplo de un evento registrado:
 }
 ```
 
-## Desarrollo
+## 🛠 Desarrollo
 
 ### Estructura del Proyecto
 
-- `SocketClient.java`: Maneja la comunicación asíncrona con el servidor de socket.
-- `PlayerInfo.java`: Representa la estructura de datos para la información del jugador.
-- `Config.java`: Gestiona la configuración del mod.
-- `FakePlayerLoggerMixin.java`: Contiene el mixin para interceptar eventos de aparición de jugadores falsos.
+- **`SocketClient.java`**: Maneja la comunicación asíncrona con el servidor de socket.
+- **`PlayerInfo.java`**: Representa la estructura de datos para la información del jugador.
+- **`Config.java`**: Gestiona la configuración del mod.
+- **`FakePlayerLoggerMixin.java`**: Contiene el mixin para interceptar eventos de jugadores falsos.
 
 ### Compilación
 
-1. Clona el repositorio
-2. Configura tu entorno de desarrollo para modding de Fabric
-3. Ejecuta `./gradlew build` para compilar el mod
+1. Clona el repositorio.
+2. Configura tu entorno de desarrollo para **Fabric**.
+3. Ejecuta `./gradlew build` para compilar el mod.
 
-## Contribuir
+## 🤝 Contribuir
 
-![GitHub](https://img.shields.io/badge/github-FakePlayerEventLogger-blue?logo=github) ![Minecraft](https://img.shields.io/badge/Minecraft-Mod-blue?logo=minecraft) ![Modding](https://img.shields.io/badge/Modding-Java-blue?logo=java) 
+¡Las contribuciones son bienvenidas! Si deseas mejorar este proyecto, no dudes en enviar un **Pull Request**. 
 
-¡Las contribuciones son bienvenidas! No dudes en enviar un Pull Request.
+### 🧩 Contribuciones específicas que puedes hacer:
 
-## Licencia
+- Mejorar la eficiencia del manejo de eventos.
+- Añadir soporte para versiones adicionales de **Minecraft**.
+- Integrar nuevas características como un sistema de notificaciones en tiempo real.
 
-Este proyecto está licenciado bajo la Licencia CC0-1.0 - consulta el archivo LICENSE para más detalles.
+## 📝 Licencia
 
-## Agradecimientos
+Este proyecto está licenciado bajo la **Licencia CC0-1.0**. Consulta el archivo LICENSE para más detalles.
 
-- Al equipo del mod Carpet por proporcionar la base para esta extensión
-- A la comunidad de Fabric por sus herramientas de modding y soporte
+## 💬 Agradecimientos
+
+- Agradecemos al equipo del mod **Carpet** por proporcionar la base de esta extensión.
+- Gracias a la comunidad de **Fabric** por sus excelentes herramientas de modding y soporte continuo.
