@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "com.fakeplayereventlogger.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+
+		"FakePlayerLoggerMixin"
+		
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
