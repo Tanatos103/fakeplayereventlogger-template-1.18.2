@@ -16,9 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
 
-
 @Mixin(PlayerCommand.class)
-public abstract class FakePlayerLoggerMixin {
+public abstract class SpawnFakePlayerMixin {
     private static final SocketClient SOCKET_CLIENT;
 
     static {
@@ -30,8 +29,6 @@ public abstract class FakePlayerLoggerMixin {
         ServerCommandSource source = context.getSource();
         String playerName = context.getArgument("player", String.class);
         Vec3d pos = source.getPosition(); // Usamos la posición del ejecutor como valor predeterminado
-
-
 
         ServerPlayerEntity executorPlayer = source.getPlayer();
         
