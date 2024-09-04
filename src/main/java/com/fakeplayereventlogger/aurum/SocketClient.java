@@ -1,63 +1,61 @@
 package com.fakeplayereventlogger.aurum;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SocketClient implements AutoCloseable {
-    private static final Logger LOGGER = LoggerFactory.getLogger("EventLogs");
+
+    private static final Logger LOGGER = LoggerFactory.getLogger("SocketClient:FakePlayerLogger");
     private static final int QUEUE_CAPACITY = 1000;
     private static final int BUFFER_SIZE = 8192;
 
     private final String host;
     private final int port;
     private final BlockingQueue<String> messageQueue;
-    private final AtomicBoolean isRunning;
+    private volatile boolean isRunning; // Usamos un booleano simple
     private final ExecutorService executorService;
-    private final AsynchronousChannelGroup channelGroup;
     private final Thread senderThread;
 
-    public SocketClient(String host, int port) throws IOException {
+    public SocketClient(String host, int port) {
         this.host = host;
         this.port = port;
         this.messageQueue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
-        this.isRunning = new AtomicBoolean(true);
-        this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        this.channelGroup = AsynchronousChannelGroup.withThreadPool(executorService);
+        this.isRunning = true;
+        this.executorService = Executors.newSingleThreadExecutor();
         this.senderThread = initSenderThread();
     }
 
     public void sendPlayerInfoAsync(String json) {
         if (!messageQueue.offer(json)) {
-            LOGGER.warn("Message queue is full. Applying backpressure.");
             try {
-                messageQueue.put(json); // This will block if the queue is full
+                messageQueue.put(json); // Esto bloqueará si la cola está llena
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                LOGGER.error("Interrupted while waiting to add message to queue", e);
             }
         }
     }
 
     private Thread initSenderThread() {
         Thread thread = new Thread(() -> {
-            while (isRunning.get() && !Thread.currentThread().isInterrupted()) {
+            while (isRunning && !Thread.currentThread().isInterrupted()) {
                 try {
                     String json = messageQueue.poll(1, TimeUnit.SECONDS);
                     if (json != null) {
                         sendMessageAsync(json);
                     }
                 } catch (InterruptedException e) {
-                    LOGGER.info("Sender thread interrupted");
                     Thread.currentThread().interrupt();
                 }
             }
@@ -68,9 +66,9 @@ public class SocketClient implements AutoCloseable {
 
     private void sendMessageAsync(String json) {
         try {
-            AsynchronousSocketChannel channel = AsynchronousSocketChannel.open(channelGroup);
+            AsynchronousSocketChannel channel = AsynchronousSocketChannel.open();
             InetSocketAddress serverAddress = new InetSocketAddress(host, port);
-            
+
             channel.connect(serverAddress, null, new CompletionHandler<Void, Void>() {
                 @Override
                 public void completed(Void result, Void attachment) {
@@ -79,12 +77,10 @@ public class SocketClient implements AutoCloseable {
                         @Override
                         public void completed(Integer result, Void attachment) {
                             closeQuietly(channel);
-                            LOGGER.debug("JSON sent successfully: {}", json);
                         }
 
                         @Override
-                        public void failed(Throwable exc, Void attachment) {
-                            LOGGER.error("Failed to send message", exc);
+                        public void failed(Throwable exc, Void attachment) { 
                             closeQuietly(channel);
                         }
                     });
@@ -113,7 +109,7 @@ public class SocketClient implements AutoCloseable {
 
     @Override
     public void close() {
-        isRunning.set(false);
+        isRunning = false; // Detenemos el hilo
         senderThread.interrupt();
         try {
             senderThread.join(5000);
@@ -121,6 +117,10 @@ public class SocketClient implements AutoCloseable {
             LOGGER.error("Interrupted while waiting for sender thread to stop", e);
             Thread.currentThread().interrupt();
         }
+        shutdownExecutor();
+    }
+
+    private void shutdownExecutor() {
         executorService.shutdownNow();
         try {
             if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
@@ -130,20 +130,6 @@ public class SocketClient implements AutoCloseable {
             LOGGER.error("Interrupted while waiting for ExecutorService to terminate", e);
             Thread.currentThread().interrupt();
         }
-        try {
-            channelGroup.shutdownNow();
-            channelGroup.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (IOException | InterruptedException e) {
-            LOGGER.error("Error shutting down channel group", e);
-            Thread.currentThread().interrupt();
-        }
     }
 
-    public static void main(String[] args) {
-        try (SocketClient client = new SocketClient(Config.getServerHost(), Config.getServerPort())) {
-            // Use the client here
-        } catch (IOException e) {
-            LOGGER.error("Error initializing SocketClient", e);
-        }
-    }
 }
